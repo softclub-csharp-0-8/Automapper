@@ -44,9 +44,8 @@ public class BookEditorService
 
     public AddBookEditorDto UpdateEditor(AddBookEditorDto model)
     {
-        var find = _context.BookEditors.Find(model.EditorId);
-        find.EditorId = model.EditorId;
-        find.BookIsbn = model.BookIsbn;
+        var find = _context.BookEditors.Find(model.EditorId,model.BookIsbn);
+        find.EditedAt = DateTime.Now;
         _context.SaveChanges();
         return model;
     }

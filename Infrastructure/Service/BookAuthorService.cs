@@ -54,8 +54,7 @@ public class BookAuthorService
 
     public AddBookAuthorDto UpdateBookAuthor(AddBookAuthorDto model)
     {
-        var find = _context.BookAuthors.Find(model.AuthorId);
-        find.Isbn = model.Isbn;
+        var find = _context.BookAuthors.Find(model.AuthorId,model.Isbn);
         find.AuthorOrder = model.AuthorOrder;
         find.Royaltyshare = model.Royaltyshare;
         _context.SaveChanges();

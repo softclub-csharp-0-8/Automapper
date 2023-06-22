@@ -12,5 +12,11 @@ public class ServiceProfile : Profile
         .ForMember(dest=>dest.PublisherName,opt=>opt.MapFrom(src=>src.Publisher.Name));
 
         CreateMap<AddBookDto, Book>();
+        CreateMap<Author, AuthorBaseDto>();
+        CreateMap<Book, GetBookDto>();
+        
+        CreateMap<IGrouping<Book,Author>, GetBookDto>()
+            .ForMember(dest=>dest.AuthorNames,opt=>opt.MapFrom(src=>src.ToList()));
+        
     }
 }
