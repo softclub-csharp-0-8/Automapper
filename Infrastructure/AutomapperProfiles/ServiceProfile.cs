@@ -14,6 +14,7 @@ public class ServiceProfile : Profile
         CreateMap<AddBookDto, Book>();
         CreateMap<Author, AuthorBaseDto>();
         CreateMap<Book, GetBookDto>();
+        CreateMap<Book, AddBookDto>();
         
         CreateMap<IGrouping<Book,Author>, GetBookDto>()
             .ForMember(dest=>dest.AuthorNames,opt=>opt.MapFrom(src=>src.ToList()));

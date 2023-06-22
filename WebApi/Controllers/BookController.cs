@@ -1,4 +1,6 @@
+using System.Net;
 using Domain.Entities;
+using Domain.Wrapper;
 using Infrastructure.Service;
 using Microsoft.AspNetCore.Mvc;
 
@@ -6,7 +8,7 @@ namespace WebApi.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class BookController
+public class BookController : ControllerBase
 {
     private readonly BookService _service;
 
@@ -16,7 +18,7 @@ public class BookController
     }
     
     [HttpGet("GetBook")]
-    public List<GetBookDto> GetBook()
+    public Response<List<GetBookDto>> GetBook()
     {
         return _service.GetBook();
     }
@@ -34,14 +36,16 @@ public class BookController
     }
 
     [HttpPut("UpdateBook")]
-    public AddBookDto UpdateBook(AddBookDto model)
+    public async Task<IActionResult> UpdateBook(AddBookDto model)
     {
-        return _service.UpdateBook(model);
+        
+        var result  = await _service.UpdateBook(model);
+        return StatusCode((int)result.StatusCode, result);
     }
 
     [HttpDelete("DeleteBook")]
-    public bool DeleteBook(int id)
+    public async Task<Response<bool>> DeleteBook(int id)
     {
-        return _service.DeleteBook(id);
+        return await _service.DeleteBook(id);
     }
 }
