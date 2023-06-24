@@ -1,5 +1,6 @@
 using System.Net;
 using Domain.Entities;
+using Domain.Filters;
 using Domain.Wrapper;
 using Infrastructure.Service;
 using Microsoft.AspNetCore.Mvc;
@@ -18,9 +19,9 @@ public class BookController : ControllerBase
     }
     
     [HttpGet("GetBook")]
-    public Response<List<GetBookDto>> GetBook()
+    public PagedResponse<List<GetBookDto>> GetBook([FromQuery]GetBookFilter filter)
     {
-        return _service.GetBook();
+        return _service.GetBook(filter);
     }
 
     [HttpGet("GetById")]

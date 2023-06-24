@@ -1,6 +1,7 @@
 using System.Net;
 using AutoMapper;
 using Domain.Entities;
+using Domain.Filters;
 using Domain.Wrapper;
 using Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
@@ -18,11 +19,19 @@ public class BookService
         _mapper = mapper;
     }
 
-    public Response<List<GetBookDto>> GetBook()
+    public PagedResponse<List<GetBookDto>> GetBook(GetBookFilter filter)
     {
-        var books = _context.Books.ToList();
+        var validFilters = new PaginationFilter(filter.PageNumber, filter.PageSize);
+
+        var books = _context.Books.AsQueryable();
+
+        if (string.IsNullOrEmpty(filter.Title) == false)
+        {
+            books = books.Where(b => b.Title.ToLower().Contains(filter.Title.ToLower()));
+        }
+
         var joined = (
-                from b in _context.Books
+                from b in books
                 select new GetBookDto()
                 {
                    Price = b.Price,
@@ -35,8 +44,12 @@ public class BookService
                    PublisherName = b.Publisher.Name,
                    AuthorNames = _mapper.Map<List<AuthorBaseDto>>(b.BookAuthors.Select(x=>x.Author).ToList())
                 }
-            ).ToList();
-        return new Response<List<GetBookDto>>(joined);
+            ).Skip((validFilters.PageNumber - 1) * validFilters.PageSize)
+             .Take(validFilters.PageSize).ToList();
+
+        var totalRecords = books.Count();
+        
+        return new PagedResponse<List<GetBookDto>>(joined, totalRecords,filter.PageSize,filter.PageNumber);
     }
     
     public GetBookDto? GetBookById(int id)
